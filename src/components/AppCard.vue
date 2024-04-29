@@ -1,37 +1,90 @@
 <template>
     <div class="poke_sprite">
+
         <img class="poke_sprite_img" :src="getSprite" alt="">
+        <font-awesome-icon @click="prevSlide" class="icona_1" :icon="['far', 'circle-left']" />
+        <font-awesome-icon @click="nextSlide" class="icona_2" :icon="['far', 'circle-right']" />
     </div>
     <div class="poke-name">
         {{ pokemonData ? pokemonData.name : 'Cerca un Pokemon' }}
+
     </div>
 
 </template>
 
 <script>
+import { toRaw } from 'vue';
+import { store } from '../store.js'
 export default {
-
     props: {
         pokemonData: Object
     },
     data() {
 
 
-        return {}
+        return {
+            spriteIndex: 0,
+        }
+    },
+    watch: {
+        pokemonData: function (newVal, oldVal) {
+            const v = toRaw(newVal);
+            this.spriteIndex = this.getFirstImageIndex(v.sprites)
+        }
     },
     computed: {
         getSprite() {
             console.log('here', this.pokemonData)
             if (this.pokemonData && this.pokemonData.sprites) {
+                const avaibleSprites = this.getAvaibleSprites()
+                const keys = Object.keys(avaibleSprites)
+                console.log('keys', keys)
+                const currentKey = keys[this.spriteIndex];
+                const currentSprite = avaibleSprites[currentKey]
 
-                return this.pokemonData.sprites.front_default
+                return currentSprite
             } else {
-                return '/public/what-does-this-mean-v0-hyx2v97q0whb1.webp'
+                return '/what-does-this-mean-v0-hyx2v97q0whb1.webp'
             }
 
+        },
 
+
+    },
+    methods: {
+        getAvaibleSprites() {
+            const result = Object.entries(this.pokemonData.sprites).filter(([key, value]) => value !== null && key !== 'other' && key !== 'versions');
+            return Object.fromEntries(result);
+        },
+
+        nextSlide() {
+            const keys = Object.keys(this.getAvaibleSprites())
+            console.log(keys)
+            if (this.spriteIndex < keys.length - 1) {
+                this.spriteIndex++
+            } else {
+                this.spriteIndex = 0
+            }
+
+        },
+        prevSlide() {
+            const keys = Object.keys(this.getAvaibleSprites())
+            if (this.spriteIndex === 0) {
+                this.spriteIndex = keys.length - 1
+            } else {
+                this.spriteIndex--
+            }
+        },
+        getFirstImageIndex(data) {
+            const index = Object.entries(data)
+                .filter(([key, value]) => value !== null && key !== 'other' && key !== 'versions')
+                .findIndex(([key, value]) => key === 'front_default')
+            console.log(index)
+            return index
         }
-    }
+
+
+    },
 }
 </script>
 
@@ -56,5 +109,22 @@ export default {
 
 .poke_sprite_img {
     width: 100%;
+    // position: relative;
+}
+
+.icona_1 {
+    position: absolute;
+    top: 25%;
+    left: 30%;
+    font-size: 40px;
+    cursor: pointer;
+}
+
+.icona_2 {
+    position: absolute;
+    top: 25%;
+    right: 30%;
+    font-size: 40px;
+    cursor: pointer;
 }
 </style>

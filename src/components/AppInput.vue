@@ -18,7 +18,7 @@ export default {
     },
     methods: {
         getPokemonByname() {
-            axios.get(`https://pokeapi.co/api/v2/pokemon/${this.poke_name}`).then((res) => {
+            axios.get(`https://pokeapi.co/api/v2/pokemon/${this.poke_name.toLocaleLowerCase()}`).then((res) => {
                 console.log(res.data)
                 this.store.pokemon = res.data
 
@@ -26,6 +26,7 @@ export default {
             })
 
         },
+
     },
 }
 </script>
