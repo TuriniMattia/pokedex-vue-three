@@ -1,7 +1,7 @@
 <template>
     <div class="poke_sprite">
 
-        <img class="poke_sprite_img" :src="getSprite" alt="">
+        <img class="poke_sprite_img" :src="getSprite" alt="" @click="pokeCries">
         <font-awesome-icon @click="prevSlide" class="icona_1" :icon="['far', 'circle-left']" />
         <font-awesome-icon @click="nextSlide" class="icona_2" :icon="['far', 'circle-right']" />
     </div>
@@ -81,9 +81,13 @@ export default {
                 .findIndex(([key, value]) => key === 'front_default')
             console.log(index)
             return index
+        },
+        pokeCries() {
+            const audio = new Audio(this.pokemonData.cries.latest)
+            audio.volume = 0.2
+            audio.play()
+
         }
-
-
     },
 }
 </script>
